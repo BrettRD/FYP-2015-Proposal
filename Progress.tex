@@ -48,21 +48,46 @@
 
   \section{What we intend to do}
     Object Tracking, chase-cam
-    position estimation
+    %position estimation
+    \subsection{Everything in Its Place}
+      The object tracking code we ported over from the 2014 team took a relatively simplistic approach, feeding the pixel position from the image directly into two PID controllers.  This did work, but altitude, camera angle, parallax, and other variables tended to make the controller go from a-bit-weak, to utterly unstable, within seconds.
+
+      We've built up a code-base to estimate the physical position of the target in coordinates relative to the copter, trying to sanitize the inputs to the control loop. The control loop now takes inputs of the target coordinates in metres.  Our controller is still a collection of basic PID loops, but already, the behaviour is far more consistent in flight.
+
+      We expect to improve on the physicality of this, changing the controller outputs to units of metres per second, and estimating latitude and longitude of the target to assist in lost-target recovery (Section \ref{sec:Lost and Found}).  Logging the estimates of the target's global coordinates is likely to lead to insights into the stability and validity of our work, and possible improvements.
+
 
     \subsection{Lost and Found}
-      The copter is already beginning to exhibit strong tracking behaviour but given our problems with N-th order stability, we've not been able to apply aggressive parameter to the chase algorithm.  The tracked object frequently leaves the field of view of the camera.
-      We intend to write a series of algorithms to construct a weighted search-space based on the previous motion of the target.  This extrapolation will require some kind of prediction engine incorporating known properties of the target's possible motion. 
+    \label{sec:Lost and Found}
+      The copter is already beginning to exhibit strong tracking behaviour but having encountered a camera stability issue (Discussed in \ref{sec:Camera Stability}), we've not yet been able to apply aggressive parameters to the chase algorithm.  The tracked object frequently leaves the field of view of the camera.
+      We intend to write a search algorithm to attempt to locate an object shortly after it has left the frame.
+      %We intend to write a series of algorithms to construct a weighted search-space based on the previous motion of the target.  This extrapolation will require some kind of prediction engine incorporating known properties of the target's possible motion. 
+
 
 
   \section{Major Challenges}
-    \subsection{Steady Cam}
+    \subsection{Flying on a Steady Cam}
+    \label{sec:Camera Stability}
       As the platform stands, The gimbal does not sufficiently isolate platform motion to stabilise a simple control loop.
       For example, a forward motion instruction from the chase algorithm causes the copter's rear rotors to throttle up, then the platform pitches forward, then the copter accelerates forward.  The pitch data is sent to the camera stabilisation servo which has a slow slew rate and a small delay time.  This delay couples pitch motion into the image processing loop and adds a brief but intense upward swing to the location of the target in the image as the copter accelerates.
-      This behaviour is controlled by the physical properties of the copter, the flight-computer's control loops, the servo's controller and the shutter lag on the camera. While all of this is technically possible to compensate for, calibrating against mechanical and electrical properties of a commodity servo and reverse-engineering a third-order control loop introduces a large number of variables and doesn't lend itself easily to empirical validation.
+      This behaviour is controlled by the physical properties of the copter, the flight-computer's control loops, the servo's controller and the shutter lag on the camera. While all of this is technically possible to compensate for, calibrating against mechanical and electrical properties of a commodity servo and reverse-engineering a third-order control loop introduces a large number of variables and doesn't lend itself easily to empirical validation.  Many of these parts were not selected with any great care either and we fully expect to swap out or modify parts of the copter during the course of the project.
       It makes more sense to solve single whole problems; either cleanly stabilising the camera with a higher performance gimbal, or applying software image stabilisation using motion data from the flight controller to calculate through bulk motions followed by optical flow methods to remove the remaining jitter.
 
     
+
+  \section{Prior Work}
+    Multicopters have received a great deal of attention by merit of their simplicity. A great deal of design work has come out of hobbyist communities such as DIY-Drones and
+    
+    Their work often lacks scientific rigour, but frequently makes the first foray into experimental hardware, documenting for repeatability and making very (occasionally, brutally) honest claims.
+
+    Notable commercial systems:
+
+  \section{References}
+    Holographic transforms
+    Target coordinate estimation with landmarks
+    Optical flow uncertainty map
+    Altitude estimation using optical flow methods
+
 
 
 
