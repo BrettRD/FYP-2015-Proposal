@@ -27,39 +27,91 @@
   \section{Notable Prior Work}
     Multicopters have received a great deal of attention by merit of their simplicity. A great deal of design work has come out of hobbyist communities such as DIY-Drones and
     
-    Their work often lacks scientific rigour, but frequently makes the first foray into experimental hardware, documenting for repeatability and making very (occasionally, brutally) honest claims.
+    Their work often lacks scientific rigour, but frequently makes the first foray into experimental hardware, documenting for repeatability, and exposing their work to occasionally brutal peer-review.
 
-    Notable commercial systems:
+    \subsection{Notable Technologies}
+    Location stabilisation using Optical Flow Odometry
+    Altitude estimation using optical flow methods (DIY Drones)
+    Aggressive manoeuvres and precision flight with off-board processing
+    Machine-Learning Feed-Forward controllers for accurate path following
+    Computer Vision searching (Canberra UAV, outback challenge)
+
+
+    \subsection{Notable commercial systems}
     Lily Camera
+    Parrot AR-Drone
+    Ardupilot Follow Me mode
+
+    \subsection{Existing tools and software}
+    \subsubsection{Mission Planner}
+      Mission Planner is a ground-station program written for UAVs that communicate over the MAVLINK protocol
+      This will probably be our software of choice for monitoring the status of the drone during tests.
+
+
+    \subsubsection{Tower}
+
 
 
 
   \section{Where we started}
-    The Hexacopter is a DJI F550 frame with fancy-pants motors and ESCs
-    The 2013 team  decided to use a NAZA-V1-lite flight computer.  This works well for free-flight, but does not make provisions for way-point navigation or telemetry.
-    The on-board server is currently doing all of the autonomous navigation processing which is appropriate for computer-vision directed flight-modes, but adds additional  hurdles to way-point navigation; a problem that is already very well-solved in industrial, hobbyist, and consumer grade drones.
+    \subsection{Flight Hardware}
+      The Hexacopter is a DJI F550 frame with fancy-pants motors and ESCs, 254mm props, 5Ah 11.1V Lipo battery.
+      This platform gives us a generous lifting capacity, and enough flight time to run multiple tests.
 
+    \subsection{Flight Electronics}
+      The 2013 team  decided to use a NAZA-V1-lite flight computer.  This works well for free-flight, but does not make provisions for way-point navigation or telemetry.Interfacing is via Servo signals only.
+
+      In order to switch between manual and autonomous modes, the 2013 team installed a switching circuit. This circuit featured a 555 timer and eight relays.
+      There was no schematic, and the only documentation was a copper layout. Only after meeting with the 2014 team did we become aware that there were dead channels on this board.
+
+    \subsection{Autonomy Electronics}
+      In Autonomous mode, the hexacopter is directed by a Raspberry Pi Model-B Single-Board-Computer.
+      This platform is extremely widely used for all manner of projects simply due to its cost.
+      It supports Linux and has drivers for almost any hardware we could hope to add to the system. It supports a camera over a dedicated interface.
+      The server has a WiFi connection allowing us to remotely control the autonomous features, and even re-configure and recompile components during manual flight.
+
+    \subsection{Autonomy Software}
+      The on-board server is currently doing all of the autonomous navigation processing.  This works reasonably well for slow manoeuvres but the latency in data collection, and the generation and re-interpretation of control signals leaves the Pi at a distinct performance disadvantage to autonomous routines running on the flight-computer.
+
+      The Pi runs a basic webserver hosting a page with basic autonomy controls. We can engage various
+
+    \subsection{Sensors and auxiliary Hardware}
+      The camera is stabilised for pitch and roll by two servos. The tilt servo was damaged and tilt stabilisation was almost non-existent.  The servos receive correction information from the flight computer with a configurable gain parameter.  The servos are able to hold the camera level in the steady state, but have a significantly delayed response.
+
+      The server collected position data from a second GPS module.  This GPS module appears to have a filtering scheme with dead-reckoning configured for automotive applications; It exhibited lazy vertical response, and low accelerations.
+
+      Bearing data was to be collected from an X-sens branded IMU, though this was not installed at the time of hand-over, possibly due to an unreasonably heavy wiring harness.  Instead, the navigation loops in the old code-base estimated the bearing by flying forward for a fixed interval before beginning navigation, relying on the flight computer to hold the bearing for the duration of the mission.
 
 
   \section{What we've achieved}
-    We've implemented and tested the code that we were able to salvage from the previous year-groups,
+
+    Much of our efforts to date have been trying to correct the problems with the platform and its code-base. %and we're wondering when we can stop blaming our problems on the previous teams.
+
     Mathematics that estimates the location of a point of interest based on certain assumptions
 
-    We've made a proposal and ordered parts to move to the Ardupilot flight control software running on the Pixhawk flight computer.
-    This move allows us to utilise the vast array of supporting software that the Ardpilot community has written including ground-stations, telemetry loggers, Smart-phone apps, Kalman navigation filters and automatic flight control tuning.
-
+    With the heroic efforts of Jeremy Tan, we've implemented and tested code that we were able to salvage from the previous year-groups.  
     Oddly, our tests of the previous year-groups' code have produced better results than are published in the respective papers, however the claims of the previous groups still appear grossly overstated.
     Various improvements to the hardware including landing gear, Wiring harness, enclosures
 
     Reverse-engineering of circuits used by the previous groups. Having talked to the previous teams, we appear to have generated better documentation about the hardware than the teams had worked with initially.
 
-    Break-in to the NAZA GPS system, and subsequent removal of the Q-starz GPS.  Q-star GPS appears to have had a filtering scheme and dead-reckoning configured for automotive applications; lazy vertical response, low accelerations.
-    Removal of the IMU (used only for heading data)
+    Break-in to the NAZA GPS system, and subsequent removal of the Q-starz GPS.
+    The NAZA GPS system uses a basic TTL-level serial protocol, but the message payloads are XORed with an obscure bit combination from the payload itself.  It looks as though the protocol was deliberately obfuscated by DJI.
+    
+    We found a forum that had a reverse-engineering effort for this protocol, and ported it to the Pi and its hardware serial port.  This connection gives us access to the same GPS data that the flight computer is working with, reducing controller conflicts. It also gives us access to the NAZA's raw magnetometer data which could be used for bearing, but the inherent biases and changes due to unknown pitch and roll make this data difficult to use.
 
+    We've made a proposal and ordered parts to remove the NAZA-V1-Lite flight computer and replace it with a 3D-Robotics Pixhawk running the Ardupilot flight control software.
+    This change allows us to utilise the vast array of supporting software that the Ardpilot community has written including ground-stations, telemetry loggers, Smart-phone apps, Kalman navigation filters and automatic flight control tuning.  It also exposes all of the live flight parameters, raw and processed, available over a documented interface.
+    This decision was partly motivated by our observations of an older APM-2.6 flight computer running similar firmware.
+
+    After breaking into the flight computer and agreeing to change to the Pixhawk, the X-sens IMU was never added to the copter, and the drivers were removed from the code-base.
 
 
 
   \section{What we intend to do}
+
+    \subsection{Go Fetch}
+      The 
     Object Tracking, chase-cam 
     %chase and inspect a moving train
     %position estimation
@@ -83,7 +135,7 @@
     \subsection{Limiting Controller Complexity}
       A method for the copter to chase an object on a screen is a relatively straight-forward problem to grasp intuitively, but include camera geometry, position estimation, velocity and acceleration limits and such; just defining the problem turns into a wall of mathematics.  We've made a lot of towards sensible estimation and chase routines already, but already the single-input-single-output PID controllers are becoming inadequate. The control scheme will need to be analysed in a more comprehensive manner, incorporating data sets from multiple sources to coordinate coherent actions in a multi-input-multi-output controller.
 
-      Limiting the scope and complexity of the controller may well become a matter of identifying diminishing returns.  Rigorous flight performance analysis using sensible metrics, monitoring the time spent coding those incremental improvements, and assessing the wider applicability of the possible changes, may help to identify when the controller can be declared "good enough".
+      Limiting the scope and complexity of the controller may well become a matter of identifying diminishing returns.  Rigorous flight performance analysis using sensible metrics, monitoring the time spent coding those incremental improvements, and assessing the wider applicability of the possible changes may help to identify when the controller should be declared "good enough".
 
 
     \subsection{Flying on a Steady Cam}
@@ -91,7 +143,9 @@
       As the platform stands, The gimbal does not sufficiently isolate platform motion to stabilise a simple control loop.
       For example, a forward motion instruction from the chase algorithm causes the copter's rear rotors to throttle up, then the platform pitches forward, then the copter accelerates forward.  The pitch data is sent to the camera stabilisation servo which has a slow slew rate and a small delay time.  This delay couples pitch motion into the image processing loop and adds a brief but intense upward swing to the location of the target in the image as the copter accelerates.
       This behaviour is controlled by the physical properties of the copter, the flight-computer's control loops, the servo's controller and the shutter lag on the camera. While all of this is technically possible to compensate for, calibrating against mechanical and electrical properties of a commodity servo and reverse-engineering a third-order control loop introduces a large number of variables and doesn't lend itself easily to empirical validation.  Many of these parts were not selected with any great care either and we fully expect to swap out or modify parts of the copter during the course of the project.
+
       It makes more sense to solve single whole problems; either cleanly stabilising the camera with a higher performance gimbal, or applying software image stabilisation using motion data from the flight controller to calculate through bulk motions followed by optical flow methods to remove the remaining jitter.
+      The change to the Ardupilot flight computer will give us access to IMU data required for software stabilisation, but it may prove too computationally intensive for the PiV2 to process.
 
 
     \subsection{Tough Shit}
