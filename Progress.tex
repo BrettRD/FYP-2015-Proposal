@@ -129,11 +129,13 @@
       We intend to write a search algorithm to attempt to locate an object shortly after it has left the frame.
       %We intend to write a series of algorithms to construct a weighted search-space based on the previous motion of the target.  This extrapolation will require some kind of prediction engine incorporating known properties of the target's possible motion. 
 
+    \subseciton{MAVLINK Integration}
+      The new flight controller needs a library to communicate with the pi
 
 
   \section{Major Challenges}
     \subsection{Limiting Controller Complexity}
-      A method for the copter to chase an object on a screen is a relatively straight-forward problem to grasp intuitively, but include camera geometry, position estimation, velocity and acceleration limits and such; just defining the problem turns into a wall of mathematics.  We've made a lot of towards sensible estimation and chase routines already, but already the single-input-single-output PID controllers are becoming inadequate. The control scheme will need to be analysed in a more comprehensive manner, incorporating data sets from multiple sources to coordinate coherent actions in a multi-input-multi-output controller.
+      A method for the copter to chase an object on a screen is a relatively straight-forward problem to grasp intuitively, but include camera geometry, position estimation, velocity and acceleration limits and such; just defining the problem turns into a wall of mathematics.  We've made a lot of progress towards sensible estimation and chase routines already, but already the single-input-single-output PID controllers are becoming inadequate. The control scheme will need to be analysed in a more comprehensive manner, incorporating data sets from multiple sources to coordinate coherent actions in a multi-input-multi-output controller.
 
       Limiting the scope and complexity of the controller may well become a matter of identifying diminishing returns.  Rigorous flight performance analysis using sensible metrics, monitoring the time spent coding those incremental improvements, and assessing the wider applicability of the possible changes may help to identify when the controller should be declared "good enough".
 
@@ -151,13 +153,17 @@
     \subsection{Tough Shit}
     \label{sec:Reliability}
       When we were first shown the platform, my first thoughts were WTF is all that spaghetti doing on a flying machine.
-      Between dead servos, incomplete configurations, undocumented custom circuits with known but undocumented faults, and a wiring loom that was unreliable, undocumented, and even simply incorrect;  we've been set back by days at a time with intermittent faults.
+      Between dead servos, incomplete configurations, undocumented custom circuits with supposedly known but undocumented faults, and a wiring loom that was unreliable, undocumented, and even simply incorrect;  we've been set back by days at a time with intermittent faults.
 
-      The change to the Pixhawk is set to remove and simplify a large portion of the wiring harness, but maintaining a high quality of work over a long project is difficult; small, temporary hacks tend to become permanent fixtures.  We believe we have the technical skill in the group to leave the wiring harness at least presentable, if not bullet-proof.
+      Maintaining a high quality of work over a long project is difficult; small, temporary hacks tend to become permanent fixtures and intermittent faults are left undiagnosed with time being prioritised to flashy achievements.
+
+      The change to the Pixhawk is set to remove, modify, and simplify a large portion of the wiring harness.  This is probably the best opportunity to do clean-room engineering on the hardware.  We believe we have the technical skill in the group to leave the wiring harness at least presentable, if not bullet-proof.
+
 
     \subsection{Extensible Code}
-      Our team has selected projects that are able to begin very independently and achieve clearly defined goals, but then a series of hand-overs are to occur in which our work circulates, and each of our results are used to enhance the work of another.
-      For this to happen, our code needs to reasonably well documented and conform to some kind of standard.  As with the hardware modifications, maintaining a high degree of quality across the board is difficult, but we hope that this code-rotation measure will force some level of accountability to documentation and code cleanliness.
+      As with incremental hardware modifications, maintaining a high degree of quality across the board is difficult.  Despite the pressures of 
+      For this to happen, our code needs to reasonably well documented, modular, and conform to some kind of standard. 
+      Our team has selected projects that are able to begin very independently and achieve clearly defined goals, but as these new capabilities mature, they will be used to enhance aspects of the other projects.  We hope that this cross-project extensibility measure will force some level of accountability to documentation and code cleanliness.
 
 
 
