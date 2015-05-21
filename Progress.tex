@@ -1,35 +1,68 @@
-\documentclass[11pt]{article}
+\documentclass[a4paper, 11pt, titlepage]{article}
+\usepackage{a4wide}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage{subcaption}
 \usepackage{listings}
 \usepackage{color}
-\title{Hexacopter\\
-	Progress Report}
+
+\title{Autonomous Control of a Multirotor Unmanned Aerial Vehicle\\
+Real-time computer-vision guided navigation about moving points of interest}
 \author{Brett Downing}
 \date{}
 \begin{document}
   \maketitle
-
-  Progress Report
-  
-  Accurate judgement of progress to date and plan of further progress.
-
-  \section{Preamble}
-    %Buzzword Bingo
+  \begin{abstract}
+    %what it is, where it fits, what focus do we have
+    The low complexity and VTOL capability of Multirotor Micro-UAVs lends itself to automation
+    Market prolifertation
+    Maturity
     Multicopters are increasingly popular... Simplicity... Market Saturation... rapidly changing legal situation... 
-    Recent Developments in power and control electronics.
+    The technology of Micro UAVs is reaching a level of maturity where consumer level drones are advertising 
+    This study focusses on the control loops behind computer-vision guided navigation. 
 
-    Much of the technology related to multicopters is applicable to most other forms of UAV.
-    Agriculture, mapping, targeted crop dusting, Cinematography, extreme-sport photography, Data collection, remote observation and inspection, hazard monitoring,
+  \end{abstract}
+  \tableofcontents
+
+  \section{Introduction}
+    %Buzzword Bingo
+    \subsection{Motivation}
+    Recent Developments in power and control electronics has allowed small, consumer level UAVs to lift enough processing capacity to navigate at least partly by computer vision.
+
+    A number of Commercial Micro UAVs are beginning to advertise the ability to act as an autonomous chase-cam.  Many of these systems rely on a tracking device on the user, and many navigate almost entirely by GPS.  While the performace of GPS is improving, the performance of a chase-cam will be limited to the update rate and fix accuracy of the beacon and drone GPS modules.  It also requires a lock to be achieved in both devices before tracking can commence.
+    Radio direction-finding is a less used method in consumer systems lately, largely because of the market saturation of GPS devices, and the size requirements of RDF system antennas.
+
+    The power distribution and plant monitoring sectors have recently been taking on small fleets of drones to perform routine inspection of remote, hazardous or otherwise difficult locations.  Many of these applications are reasonably repetitive and well defined enough to fully automate, but cannot be navigated by GPS alone due to the poor repeatability of the GPS system. 
+
+    This study will investigate the usability of computer vision alone to track and follow a moving target, and navigate an automated inspection routine of points of interest established by computer-vision.  It is hoped that this work can be used to improve the performance of camera tracking routines in autonomous chase-cam and cinematographic applications, and partially automate remote inspection 
+
+    Much of the technology related to multicopters is applicable to most other forms of UAV.  The vast array of applications micro UAVs have found suggests this work may find use in Agriculture, mapping, targeted crop dusting, Cinematography, extreme-sport photography, Data collection, remote observation and inspection and hazard and environmental monitoring.
 
 
-  \section{Notable Prior Work}
+  \subsection{Project History}
+  %names, references
+    \subsubsection{2013}
+    The 2013 team established the project with the purchase of a DJI flamewheel F550 Hexacoopter with a NAZA-lite flight controller.  This copter was fitted and tested, and finally converted into an autonomous platform with the adition of a Raspberry Pi single-board computer (RPi) and a circuit to switch the control channels from the radio receiver to the RPi GPIO outputs.
+    The NAZA-lite at this time did not feature telemetry ouputs or waypoint inputs, but it was able to loiter in a stiff wind using a GPS fix.
+    This team gathered location information for the RPi using a Qstarz GPS unit, and bearing information using an Xsens IMU.  The sensor duplication did not exceed the maximum payload capacity of the platform, but it did suffer a short flight-time.
+    The drone was able to execute basic way-point navigation.
+    \subsubsection{2014}
+    The 2014 team added a web UI to control the various autonomous features of the platform, displaying the flight-path of the copter
+    The waypioint navigation routines was improved and extended to permit operation without reliable heading information
+    added a basic computer-vision guided chase-cam routine.
+
+    \subsubsection{2015}
+    The project is being continued by four students 
+    Critical review of all aspects of the platform and made improvements
+    Change to 
+
+  \section{Lit Review}
+  \subsection{Notable Prior Work}
     Multicopters have received a great deal of attention by merit of their simplicity. A great deal of design work has come out of hobbyist communities such as DIY-Drones and
     
     Their work often lacks scientific rigour, but frequently makes the first foray into experimental hardware, documenting for repeatability, and exposing their work to occasionally brutal peer-review.
 
-    \subsection{Notable Technologies}
+    \subsubsection{Notable Technologies}
     Location stabilisation using Optical Flow Odometry
     Altitude estimation using optical flow methods (DIY Drones)
     Aggressive manoeuvres and precision flight with off-board processing
@@ -37,55 +70,54 @@
     Computer Vision searching (Canberra UAV, outback challenge)
 
 
-    \subsection{Notable commercial systems}
+    \subsubsection{Notable commercial systems}
     Lily Camera
     Parrot AR-Drone
     Ardupilot Follow Me mode
 
-    \subsection{Existing tools and software}
-    \subsubsection{Mission Planner}
+    \subsubsection{Existing tools and software}
+    Mission Planner:
       Mission Planner is a ground-station program written for UAVs that communicate over the MAVLINK protocol
       This will probably be our software of choice for monitoring the status of the drone during tests.
 
-
-    \subsubsection{Tower}
-
-
+    Tower:
+      Android app, supports tcp link
 
 
-  \section{Where we started}
-    \subsection{Flight Hardware}
+  \section{Progress Report}
+  \subsection{Where we started}
+    \subsubsection{Flight Hardware}
       The Hexacopter is a DJI F550 frame with fancy-pants motors and ESCs, 254mm props, 5Ah 11.1V Lipo battery.
       This platform gives us a generous lifting capacity, and enough flight time to run multiple tests.
 
-    \subsection{Flight Electronics}
+    \subsubsection{Flight Electronics}
       The 2013 team  decided to use a NAZA-V1-lite flight computer.  This works well for free-flight, but does not make provisions for way-point navigation or telemetry.Interfacing is via Servo signals only.
 
       In order to switch between manual and autonomous modes, the 2013 team installed a switching circuit. This circuit featured a 555 timer and eight relays.
       There was no schematic, and the only documentation was a copper layout. Only after meeting with the 2014 team did we become aware that there were dead channels on this board.
 
-    \subsection{Autonomy Electronics}
+    \subsubsection{Autonomy Electronics}
       In Autonomous mode, the hexacopter is directed by a Raspberry Pi Model-B Single-Board-Computer.
       This platform is extremely widely used for all manner of projects simply due to its cost.
       It supports Linux and has drivers for almost any hardware we could hope to add to the system. It supports a camera over a dedicated interface.
       The server has a WiFi connection allowing us to remotely control the autonomous features, and even re-configure and recompile components during manual flight.
 
-    \subsection{Autonomy Software}
+    \subsubsection{Autonomy Software}
       The on-board server is currently doing all of the autonomous navigation processing.  This works reasonably well for slow manoeuvres but the latency in data collection, and the generation and re-interpretation of control signals leaves the Pi at a distinct performance disadvantage to autonomous routines running on the flight-computer.
 
       The Pi runs a basic webserver hosting a page with basic autonomy controls. We can engage various
 
-    \subsection{Sensors and auxiliary Hardware}
+    \subsubsection{Sensors and auxiliary Hardware}
       The camera is stabilised for pitch and roll by two servos. The tilt servo was damaged and tilt stabilisation was almost non-existent.  The servos receive correction information from the flight computer with a configurable gain parameter.  The servos are able to hold the camera level in the steady state, but have a significantly delayed response.
 
       The server collected position data from a second GPS module.  This GPS module appears to have a filtering scheme with dead-reckoning configured for automotive applications; It exhibited lazy vertical response, and low accelerations.
 
       Bearing data was to be collected from an X-sens branded IMU, though this was not installed at the time of hand-over, possibly due to an unreasonably heavy wiring harness.  Instead, the navigation loops in the old code-base estimated the bearing by flying forward for a fixed interval before beginning navigation, relying on the flight computer to hold the bearing for the duration of the mission.
 
-
-  \section{What we've achieved}
+  \subsection{What we've achieved}
 
     Much of our efforts to date have been trying to correct the problems with the platform and its code-base. %and we're wondering when we can stop blaming our problems on the previous teams.
+    Errors in the wiring harness creating power supply problems
 
     Mathematics that estimates the location of a point of interest based on certain assumptions
 
@@ -106,41 +138,57 @@
 
     After breaking into the flight computer and agreeing to change to the Pixhawk, the X-sens IMU was never added to the copter, and the drivers were removed from the code-base.
 
+    Configuration of the failsafe
+      This will, no more hard landings
 
 
-  \section{What we intend to do}
 
-    \subsection{Go Fetch}
-      The 
-    Object Tracking, chase-cam 
+  \subsection{Aims}
+
+    \subsubsection{Hardware Modifications}
+      Following the critical review of the hexacopter hardware, we intend to continue development to bring the platform to a respectable standard. These changes started with corrections to the wiring harness, replacement of the landing gear and will continue with the change to the Pixhawk flight computer as discussed in Appendix !!!.
+      The servo driven camera gimbal is showing limitations in its abilty to stabilise the camera, but more testing is required before we can make an honest evaluation of its performance and recommend changes.
+      A large number of the algorithms we have discussed to identify or track objects require slightly more information than is readilly available from the camera alone.  A variety of additional sensors will be investigated during the course of this project to fill these information gaps.
+
+    \subsubsection{MAVLINK Integration}
+
+      The new flight controller su needs a library to communicate with the pi
+
+    \subsubsection{Go Fetch}
+      The focus of this project is to position the UAV based largely on information from the camera.  
+
+      The object tracking code we ported over from the 2014 team took a relatively simplistic approach, feeding the pixel position from the image directly into two PID controllers.  This did work, but altitude, camera angle, parallax, and other variables tended to make the controller go from a-bit-weak, to utterly unstable with wht seemed like minor environmental changes.
+
+      We've built up a code-base to estimate the physical position of the target in coordinates relative to the copter, trying to sanitize the inputs to the control loop. The control loop now takes inputs of the target coordinates in metres.  Our controller is still a collection of basic PID loops, but already, the behaviour is far more consistent in flight.  We hope to continue this development, improving the copter's ability to follow a highly visible target.  This will allow us to perform reasonably aggressive maneuvers that should highlight weaknesses in the existing software chain.
+
     %chase and inspect a moving train
     %position estimation
-    \subsection{Everything in Its Place}
-      The object tracking code we ported over from the 2014 team took a relatively simplistic approach, feeding the pixel position from the image directly into two PID controllers.  This did work, but altitude, camera angle, parallax, and other variables tended to make the controller go from a-bit-weak, to utterly unstable, within seconds.
 
-      We've built up a code-base to estimate the physical position of the target in coordinates relative to the copter, trying to sanitize the inputs to the control loop. The control loop now takes inputs of the target coordinates in metres.  Our controller is still a collection of basic PID loops, but already, the behaviour is far more consistent in flight.
-
-      We expect to improve on the physicality of this, changing the controller outputs to units of metres per second, and estimating latitude and longitude of the target to assist in lost-target recovery (Section \ref{sec:Lost and Found}).  Logging the estimates of the target's global coordinates is likely to lead to insights into the stability and validity of our work, and possible improvements.
-
-
-    \subsection{Lost and Found}
+    \subsubsection{Lost and Found}
     \label{sec:Lost and Found}
       The copter is already beginning to exhibit strong tracking behaviour but having encountered a camera stability issue (Discussed in \ref{sec:Camera Stability}), we've not yet been able to apply aggressive parameters to the chase algorithm and the tracked object frequently leaves the field of view of the camera.
       We intend to write a search algorithm to attempt to locate an object shortly after it has left the frame.
       %We intend to write a series of algorithms to construct a weighted search-space based on the previous motion of the target.  This extrapolation will require some kind of prediction engine incorporating known properties of the target's possible motion. 
 
-    \subseciton{MAVLINK Integration}
-      The new flight controller needs a library to communicate with the pi
 
+    \subsubsection{Everything in Its Place}      
+    %   to assess the stability of the positioning loop, and the stability of the target estimaiton algorihtm.
+      Object Tracking, chase-cam, remote positioning.
 
-  \section{Major Challenges}
-    \subsection{Limiting Controller Complexity}
+      We expect to improve on the physicality of our control systems, estimating latitude and longitude of the target to assist in lost-target recovery (Section \ref{sec:Lost and Found}).  Logging the estimates of the target's global coordinates is likely to lead to insights into the stability and validity of our work, and suggest possible improvements.
+
+      We'd like to convert the loop to calcualte the desired location of the drone based on the location of the targets that have been spotted, regardless of which objects are currently in the frame.  This would provide a foundation for a Simultaneous Localisation and Mapping (SLAM) system.
+
+      Ideally, we'd use this information to calculate appropriate observation locations as waypoints for remote inspection, and construct no-fly-zones around visible obstructions.  Getting this far will rely heavilly on tightly integrating work from all members of the team, and may not be feasible due to time constraints.
+
+  \subsection{Major Challenges}
+    \subsubsection{Limiting Controller Complexity}
       A method for the copter to chase an object on a screen is a relatively straight-forward problem to grasp intuitively, but include camera geometry, position estimation, velocity and acceleration limits and such; just defining the problem turns into a wall of mathematics.  We've made a lot of progress towards sensible estimation and chase routines already, but already the single-input-single-output PID controllers are becoming inadequate. The control scheme will need to be analysed in a more comprehensive manner, incorporating data sets from multiple sources to coordinate coherent actions in a multi-input-multi-output controller.
 
       Limiting the scope and complexity of the controller may well become a matter of identifying diminishing returns.  Rigorous flight performance analysis using sensible metrics, monitoring the time spent coding those incremental improvements, and assessing the wider applicability of the possible changes may help to identify when the controller should be declared "good enough".
 
 
-    \subsection{Flying on a Steady Cam}
+    \subsubsection{Flying on a Steady Cam}
     \label{sec:Camera Stability}
       As the platform stands, The gimbal does not sufficiently isolate platform motion to stabilise a simple control loop.
       For example, a forward motion instruction from the chase algorithm causes the copter's rear rotors to throttle up, then the platform pitches forward, then the copter accelerates forward.  The pitch data is sent to the camera stabilisation servo which has a slow slew rate and a small delay time.  This delay couples pitch motion into the image processing loop and adds a brief but intense upward swing to the location of the target in the image as the copter accelerates.
@@ -150,7 +198,7 @@
       The change to the Ardupilot flight computer will give us access to IMU data required for software stabilisation, but it may prove too computationally intensive for the PiV2 to process.
 
 
-    \subsection{Tough Shit}
+    \subsubsection{Reliability and Repeatability}
     \label{sec:Reliability}
       When we were first shown the platform, my first thoughts were WTF is all that spaghetti doing on a flying machine.
       Between dead servos, incomplete configurations, undocumented custom circuits with supposedly known but undocumented faults, and a wiring loom that was unreliable, undocumented, and even simply incorrect;  we've been set back by days at a time with intermittent faults.
@@ -160,12 +208,10 @@
       The change to the Pixhawk is set to remove, modify, and simplify a large portion of the wiring harness.  This is probably the best opportunity to do clean-room engineering on the hardware.  We believe we have the technical skill in the group to leave the wiring harness at least presentable, if not bullet-proof.
 
 
-    \subsection{Extensible Code}
+    \subsubsection{Extensible Code}
       As with incremental hardware modifications, maintaining a high degree of quality across the board is difficult.  Despite the pressures of 
       For this to happen, our code needs to reasonably well documented, modular, and conform to some kind of standard. 
       Our team has selected projects that are able to begin very independently and achieve clearly defined goals, but as these new capabilities mature, they will be used to enhance aspects of the other projects.  We hope that this cross-project extensibility measure will force some level of accountability to documentation and code cleanliness.
-
-
 
 
   \section{Timeline}
@@ -175,17 +221,17 @@
     \subsubsection{Following the Leader}
       Copter can follow a visual cue at low accelerations.
 
-    \subsubsection{Never Give Up, Never Surrender}
+    \subsubsection{Locating Lost Items}
       Copter implements a basic search for a lost target.
 
-    \subsubsection{Out-Pace the Red-Shirts}
+    \subsubsection{Aggressive Path Following}
       Copter can keep a visual cue in sight under aggressive accelerations
 
-    \subsubsection{What are you doing up there?}
-      Copter's chase algorithm includes additional data to fully locate in three dimensions.
+    \subsubsection{Accurate Positioning}
+      Copter's chase algorithm includes additional data to fully locate points of interest in three dimensions.
         (Inclusion of other sensor data for superior state estimation (PIKSI, Lidar, Sonar))
 
-    \subsubsection{You Can't Run, You Can't Hide}
+    \subsubsection{Predictive Search Spaces}
       Copter can make a time-dependent, weighted search space based on the target's previous motion, and search it.
 
 
