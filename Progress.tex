@@ -91,20 +91,20 @@
 
     \subsection{Terrain Estimation via Optical Flow Methods}
       Adding sensors to allow the copter to understand its environment is a surprisingly difficult task.  Conventional contact methods operate at ranges far too close for UAVs, ultrasonics are buffeted by down-wash and most depth sensors are either too heavy or suffer under intense light.
-      In terms of simplicity of algorithms, biomimickry has turned up some surprising results.  In 2004, a French research group applied a number of optical flow algorithms to the navigation of a small helicopter \cite{InsectFlowMethods}.  The computer vision routines were used to inform the navigation loops, following the middle of urban tunnels and reducing speed in dense clutter, without necessarily computing the distance to the obstacles.  These routines were relatively expensive in terms of computational power, but extremely simple and parallelizeable.
+      In terms of simplicity of algorithms, biomimicry has turned up some surprising results.  In 2004, a French research group applied a number of optical flow algorithms to the navigation of a small helicopter inspired by insect vision \cite{InsectFlowMethods}.  The computer vision routines were used to inform the navigation loops, following the middle of urban tunnels and reducing speed in dense clutter, without necessarily computing the distance to the obstacles.  These routines were relatively expensive in terms of computational power, but extremely simple and parallelizeable.
 
     \subsection{Position Estimation using Stereoscopic Methods}
       Any measurement will have an associated uncertainty, extracting the most information out of a collection of measurements rarely involves taking the most accurate measurements.  It is possible to estimate the position of an object or feature using multiple images separated in either space or time, but making effective use the information requires an understanding of how the uncertainties behave.  Error Modeling in Stereo Navigation \cite{stereoUnc} investigates a number of routines to estimate the position of a vehicle by tracking visible land-marks in a stereoscopic system, and notes the interaction between the geometry of the uncertainties, and the stability of the result.
 
-    \subsection{Altitude Estimation by optical flow}
-      Elementary methods are still interesting for the sake of biomimickry, and indeed, a 20 element photo-array was demonstrated sufficient to control the altitude of an aircraft \cite{optoAlt}, coupling the altitude to the velocity.
+    \subsection{Altitude Estimation and Odometry by optical flow}
+      Elementary methods are still interesting for the sake of biomimicry, and indeed, a 20 element photo-array was demonstrated sufficient to control the altitude of an aircraft \cite{optoAlt}, coupling the altitude to the velocity.
       Dedicated, low resolution optical flow sensors have become exceedingly cheap since the market saturation of the optical mouse, and many commodity flight computers already include doppler information from GPS modules. 
       Combining this data allows the UAV to estimate the distance to the terrain, \cite{RemTerrain}.  These commodity sensors typically do not include circuitry for computing rotation, but given the cost of the sensors, that limitation can be overcome using two sensors \cite{FlowRot}.
       With the availability of these parts, a number of UAV systems such as ArduPilot already include support for these devices in their code-base \cite{ArduFlow}.
       This support also covers pitch and roll compensation and position stabilisation using odometetry.
 
-    \subsubsection{Notable Commercial Systems}
-      The rapidly expanding market for personal UAVs, and the compelling imagery from sponsored extreme sport drone cameras has created a call for personal chase-cams in the last year or so.  The Lily \cite{Lily} and the Air-Dog \cite{AirDog} are pre-release personal autonomous chase-cam systems.
+    \subsection{Notable Commercial Systems}
+      The rapidly expanding market for personal UAVs, and the compelling imagery from sponsored extreme sport drone cameras has created a call for personal chase-cams in the last year or so.  The Lily \cite{Lily} and the Air-Dog \cite{AirDog} are notable pre-release personal, autonomous, low-cost chase-cam systems.
 
   
     %\subsubsection{Existing tools and software}
@@ -129,7 +129,7 @@
       We estimate the power consumption at take-off to be in the region of 50-100A.  A switch had been installed in-line between the battery and the power distribution board. This switch was a 5A rocker switch rated to mains voltage.  Surprisingly, it lasted two full years of testing and only melted shortly after hand-over in 2015.
 
     \subsubsection{Flight Electronics}
-      The 2013 team  decided to use a NAZA-V1-lite flight computer.  This works well for free-flight, but does not make provisions for way-point navigation or telemetry.Interfacing is via Servo signals only, generated by ServoBlaster \cite{ServoBlaster} on the RPi.
+      The 2013 team  decided to use a NAZA-V1-lite flight computer.  This works well for free-flight, but does not make provisions for way-point navigation or telemetry.  Interfacing is via Servo signals only, generated by ServoBlaster \cite{ServoBlaster} on the RPi.
 
       In order to switch between manual and autonomous modes, the 2013 team installed a switching circuit. This circuit featured a 555 timer and four relays.
       There was no schematic, and the only documentation was a copper layout \cite[p. 27-28]{OConnor}.  Only after meeting with the 2014 team did we become aware that there were dead channels on this board due to multiple failed relays.
@@ -138,19 +138,19 @@
       In Autonomous mode, the hexacopter is directed by a Raspberry Pi Model-B Single-Board-Computer.
       This platform is extremely widely used for all manner of projects simply due to its cost.
       It supports Linux and has drivers for almost any hardware we could hope to add to the system. It supports a camera over a dedicated interface.
-      The RPi is not a powerful computer it is a single ARM core running at 900MHz, and has band-width limitations that make stereoscopy difficult, 
+      The RPi is not a powerful computer: it is a single ARM core running at 900MHz, and has band-width limitations that make stereoscopy difficult.
       The server has a WiFi connection allowing us to remotely control the autonomous features, and even re-configure and recompile components during manual flight.
 
       The Wireless adapter, the GPS system, and the IMU were all connected via USB, which was powered via the RPi.  The wireless connection would frequently drop out, and the GPS would lose lock or re-connect to USB, causing the navigation routine to lock up.
       The Wiring Harness was undocumented, with links that appeared entirely temporary, but looked as though they had been there for far too long.
 
     \subsubsection{Autonomy Software}
-      The on-board server is currently doing all of the autonomous navigation processing.  This works reasonably well for slow manoeuvres but the latency in data collection, and the generation and re-interpretation of control signals leaves the Pi at a distinct performance disadvantage to autonomous routines running on the flight-computer.
+      The on-board server is currently processing all of the autonomous navigation.  This works reasonably well for slow manoeuvres but the latency in data collection, and the generation and re-interpretation of control signals leaves the Pi at a distinct performance disadvantage compared to autonomous routines running on the flight-computer.
 
-      The Pi runs a basic webserver hosting a page with basic autonomy controls.  The web interface has a small suite of tools for creating way-points, enabling camera tracking modes, and plots the course of the drone on a map.
+      The RPi runs a basic webserver hosting a page with basic autonomy controls.  The web interface has a small suite of tools for creating way-points, enabling camera tracking modes, and plots the course of the drone on a map.
 
     \subsubsection{Sensors and auxiliary Hardware}
-      The camera is stabilised for pitch and roll by two servos. The tilt servo was damaged and tilt stabilisation was almost non-existent.  The servos receive correction information from the flight computer with a configurable gain parameter.  The servos are able to hold the camera level in the steady state, but have a significantly delayed response.
+      The camera is stabilised for pitch and roll by two servos. The tilt servo was damaged and tilt stabilisation was almost non-existent.  The servos receive correction information from the flight computer with a configurable gain parameter \cite{manNAZA}.  The servos are able to hold the camera level in the steady state, but have a significantly delayed response.
 
       The server collected position data from a second GPS module (QStarz).  This GPS module appears to have a filtering scheme with dead-reckoning configured for automotive applications; It exhibited lazy vertical response, and low accelerations.
 
@@ -159,11 +159,11 @@
   \subsection{What we've achieved}
 
     \subsubsection{Flight Electronics}
-      With the drop-outs in wireless and GPS very nearly causing a crash, We ran a full tear-down of the copter's electronics and uncovered quite a serious power supply contention issue; the NAZA's power supply was connected via the relay board to the RPi which was supposed to be powered by a different power module (a potted 5V regulator).  Correcting the contention problem and repairing damaged links, the reliability of the copter was improved, but our faith was shaken.  
+      With the drop-outs in wireless and GPS very nearly causing a crash, We ran a full tear-down of the copter's electronics and uncovered quite a serious power supply contention issue; the NAZA's power supply was connected via the relay board to the RPi which was supposed to be powered by a different source.  Correcting the contention problem and repairing damaged links, the reliability of the copter was improved, but our faith was shaken.  
       We reverse-engineered the switching circuit installed by the 2013 group, and traced the wiring harness into a net-list.  Having talked to the previous teams, we seem to be working with better documentation about the hardware than the teams that installed it.
       \begin{figure}[h!]
         \centering
-        \includegraphics[width=0.8\textwidth]{SwitchCircuit.png}
+        \includegraphics[width=1\textwidth]{SwitchCircuit.png}
         \caption{The circuit used to switch between the pilot and the autopilot (reverse-engineered from copper layout)}
       \end{figure}
 
@@ -196,7 +196,7 @@
       This change allows us to utilise the vast array of supporting software that the Ardpilot community has written including ground-stations, telemetry loggers, Smart-phone apps, Kalman navigation filters and automatic flight control tuning.  It also exposes all of the live flight parameters, raw and processed, available over a documented interface.  This decision was partly motivated by our observations of an older APM-2.6 flight computer running similar firmware.
 
     \subsubsection{Autonomy Electronics}
-      With the limited processing power of the RPi model B, the computer-vision routines were quite sluggish, we have upgraded to the Raspberry Pi Version 2 which has a higher core speed, multiple cores, and more advanced processor optimisations.
+      With the limited processing power of the RPi model B, the computer-vision routines were quite sluggish.  We have upgraded to the Raspberry Pi Version 2 which has a higher core speed, multiple cores, and more advanced processor optimisations.
 
       The mass of sensor duplication was a major contributing factor in the short flight-time of the platform.  The NAZA already has GPS and IMU data, sharing it with the RPi seemed like an obvious solution.  The X-sens IMU was only being used for bearing data, and the NAZA's GPS stand contained its compass.
       We found a forum that had a reverse-engineering effort for this protocol\cite{NAZArev}, and ported it to the Pi and its hardware serial port.  This connection gives us access to the same GPS data that the flight computer is working with, reducing controller conflicts. It also gives us access to the NAZA's raw magnetometer data which could be used for bearing, but the inherent biases and changes due to unknown pitch and roll make this data difficult to use.
