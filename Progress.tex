@@ -45,8 +45,8 @@
   %\maketitle
   \begin{abstract}
     %what it is, where it fits, what focus do we have
-    The low complexity and VTOL capability of multi-rotor Micro-UAVs, and the falling cost of parts lends these platforms to an ever increasing array of autonomous routines from remote inspection to extreme sport chase-cam applications.
     This document outlines a study into using computer-vision to guide navigation routines for object tracking and autonomous remote inspection. 
+    The low complexity and VTOL capability of multi-rotor Micro-UAVs, and the falling cost of parts lends these platforms to an ever increasing array of autonomous routines from remote inspection to extreme sport chase-cam applications.
   \end{abstract}
 
   \tableofcontents
@@ -71,7 +71,7 @@
     The 2013 team, O'Connor \cite{OConnor} and Venables \cite{Venables} established the project with the purchase of a DJI flame-wheel F550 Hexacopter with a NAZA-lite flight controller.  This copter was fitted and tested, and finally converted into an autonomous platform with the addition of a Raspberry Pi single-board computer (RPi) and a circuit to switch the control channels from the radio receiver to the RPi GPIO outputs.
     The NAZA-lite at this time did not feature telemetry outputs or way-point inputs, but it was able to loiter in a stiff wind using a GPS fix.
     This team gathered location information for the RPi using a Qstarz GPS unit, and bearing information using an X-sens IMU.  The sensor duplication did not exceed the maximum payload capacity of the platform, but it did suffer a short flight-time.
-    The drone was able to execute basic way-point navigation.
+    Under direct control from the RPi, the drone was able to execute basic way-point navigation.
     \subsubsection{2014}
 
     The 2014 team, Baxter \cite{Baxter}, Mazur \cite{Mazur} and Targhagh \cite{Targhagh} continued the project adding an internet accessible web UI to control the various autonomous features of the platform, displaying the flight-path of the copter and a live feed of the camera.
@@ -90,43 +90,31 @@
       After trying a number of image recognition algorithms, the search algorithm that they flew with simply looked for the blue of the jeans of Outback Joe \cite{tridge}. This was sufficient to locate the target in a 4x6 km area.  This goes to show that even a minimally complex routine can be effectively applied in appropriate conditions.
 
     \subsection{Terrain Estimation via Optical Flow Methods}
-      Adding sensors to allow the copter to understand is a surprisingly difficult task.  Conventional contact methods operate at ranges too close for UAVs, ultrasonics are buffeted by down-wash and most depth sensors are either too heavy or suffer under intense light.
+      Adding sensors to allow the copter to understand its environment is a surprisingly difficult task.  Conventional contact methods operate at ranges far too close for UAVs, ultrasonics are buffeted by down-wash and most depth sensors are either too heavy or suffer under intense light.
       In terms of simplicity of algorithms, biomimickry has turned up some surprising results.  In 2004, a French research group applied a number of optical flow algorithms to the navigation of a small helicopter \cite{InsectFlowMethods}.  The computer vision routines were used to inform the navigation loops, following the middle of urban tunnels and reducing speed in dense clutter, without necessarily computing the distance to the obstacles.  These routines were relatively expensive in terms of computational power, but extremely simple and parallelizeable.
 
     \subsection{Position Estimation using Stereoscopic Methods}
       Any measurement will have an associated uncertainty, extracting the most information out of a collection of measurements rarely involves taking the most accurate measurements.  It is possible to estimate the position of an object or feature using multiple images separated in either space or time, but making effective use the information requires an understanding of how the uncertainties behave.  Error Modeling in Stereo Navigation \cite{stereoUnc} investigates a number of routines to estimate the position of a vehicle by tracking visible land-marks in a stereoscopic system, and notes the interaction between the geometry of the uncertainties, and the stability of the result.
 
-
     \subsection{Altitude Estimation by optical flow}
-      Dedicated, low resolution optical flow sensors have become exceedingly cheap since the market saturation of the optical mouse. 
+      Elementary methods are still interesting for the sake of biomimickry, and indeed, a 20 element photo-array was demonstrated sufficient to control the altitude of an aircraft \cite{optoAlt}, coupling the altitude to the velocity.
+      Dedicated, low resolution optical flow sensors have become exceedingly cheap since the market saturation of the optical mouse, and many commodity flight computers already include doppler information from GPS modules. 
+      Combining this data allows the UAV to estimate the distance to the terrain, \cite{RemTerrain}.  These commodity sensors typically do not include circuitry for computing rotation, but given the cost of the sensors, that limitation can be overcome using two sensors \cite{FlowRot}.
+      With the availability of these parts, a number of UAV systems such as ArduPilot already include support for these devices in their code-base \cite{ArduFlow}.
+      This support also covers pitch and roll compensation and position stabilisation using odometetry.
 
-      Elementary methods are still interesting for the sake of biomimickry  \cite{optoAlt}
+    \subsubsection{Notable Commercial Systems}
+      The rapidly expanding market for personal UAVs, and the compelling imagery from sponsored extreme sport drone cameras has created a call for personal chase-cams in the last year or so.  The Lily \cite{Lily} and the Air-Dog \cite{AirDog} are pre-release personal autonomous chase-cam systems.
 
-    \subsection{Optical Navigation IROS}
-    \subsection{Chase cam}
-
-    \subsubsection{Notable Technologies}
-    Location stabilisation using Optical Flow Odometry
-    Altitude estimation using optical flow methods (DIY Drones)
-    Aggressive manoeuvres and precision flight with off-board processing
-    Machine-Learning Feed-Forward controllers for accurate path following
-    Computer Vision searching (Canberra UAV, outback challenge)
-
-
-
-    Holographic transforms
-    Target coordinate estimation with landmarks
-    Optical flow uncertainty map
-    Altitude estimation using optical flow methods
-
-    \subsubsection{Existing tools and software}
-    \begin{itemize}
-      \item Mission Planner\cite{MPlanner} is a ground-station program written for UAVs that communicate over the MAVLINK protocol.  There are currently three versions of this software, each built with slightly different compatibilities in mind.  This will probably be our software of choice for monitoring the status of the drone during tests.
-      \item Tower \cite{3dr-tower} is an android application that handles most of the features of a ground station on an android phone or tablet.
-      \item MAVProxy \cite{MAVProxy} is a command-line driven MAVlink integration suite that provides friendly python bindings to many of the flight-computer's features.
+  
+    %\subsubsection{Existing tools and software}
+    %\begin{itemize}
+      %\item Mission Planner\cite{MPlanner} is a ground-station program written for UAVs that communicate over the MAVLINK protocol.  There are currently three versions of this software, each built with slightly different compatibilities in mind.  This will probably be our software of choice for monitoring the status of the drone during tests.
+      %\item Tower \cite{3dr-tower} is an android application that handles most of the features of a ground station on an android phone or tablet.
+      %\item MAVProxy \cite{MAVProxy} is a command-line driven MAVlink integration suite that provides friendly python bindings to many of the flight-computer's features.
 
 
-      \end{itemize}
+      %\end{itemize}
 
   \section{Progress Report}
   \subsection{Where we started}
@@ -150,6 +138,7 @@
       In Autonomous mode, the hexacopter is directed by a Raspberry Pi Model-B Single-Board-Computer.
       This platform is extremely widely used for all manner of projects simply due to its cost.
       It supports Linux and has drivers for almost any hardware we could hope to add to the system. It supports a camera over a dedicated interface.
+      The RPi is not a powerful computer it is a single ARM core running at 900MHz, and has band-width limitations that make stereoscopy difficult, 
       The server has a WiFi connection allowing us to remotely control the autonomous features, and even re-configure and recompile components during manual flight.
 
       The Wireless adapter, the GPS system, and the IMU were all connected via USB, which was powered via the RPi.  The wireless connection would frequently drop out, and the GPS would lose lock or re-connect to USB, causing the navigation routine to lock up.
@@ -280,7 +269,9 @@
       As with incremental hardware modifications, maintaining a high degree of quality across the board is difficult.  
       For this to happen, our code needs to reasonably well documented, modular, conform to some kind of standard, and be logged in version control. 
       Our team has selected projects that are able to begin very independently and achieve clearly defined goals, but as these new capabilities mature, they will be used to enhance aspects of the projects of other team members.  We hope that this cross-project extensibility measure will force some level of accountability to documentation and code cleanliness.
-
+  \section{Conclusions}
+    The versatility of the multirotor platform has made possibilities for research into to a truly vast field.  Between automated landing routines, optical navigation methods, obstacle avoidance, the applications for multirotors are limited only by the skill of the engineer in applying the state-of-the-art.
+    The 2015 team hopes to demonstrate a number of robust autonomous, and semi-autonomous behaviours, and lay a solid ground-work to facilitate further development of specific applications.
 
 
 %Referencing
