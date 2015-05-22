@@ -6,7 +6,7 @@
 \usepackage{pdfpages}
 \usepackage{subcaption}
 \usepackage{listings}
-%\usepackage{color}
+\usepackage{color}
 \usepackage{cite}
 \usepackage{import}
 \usepackage[title,titletoc,toc]{appendix}
@@ -83,15 +83,24 @@
 
   \section{Literature Review}
 
-  \subsection{Optical Search}
-    The UAV Outback Challenge \cite{OutbackChallenge} is a regular competition to perform various search and rescue missions autonomously.  The performance criteria are deliberately set very high, and the competition frequently goes uncompleted.  
-    In 2012, CanberraUAV \cite{canberrauav}, a UAV development team from Canberra completed the search aspect of the competition.
-    After trying a number of image recognition algorithms, the search algorithm that they flew with simply looked for the blue of the jeans of Outback Joe \cite{tridge}.  This was sufficient to locate the target in a 4x6 km area.
+    \subsection{Optical Search}
+      Search and Rescue is a field that is extremely appropriate to automation due to the difficulty in mobilising teams in remote, harsh or dangerous conditions.  A micro UAV can be deployed quickly and commence the search operation before boots can be placed on the ground.
+      The UAV Outback Challenge \cite{OutbackChallenge} is a regular competition to perform various search and rescue missions autonomously.  The performance criteria are deliberately set very high, and the competition frequently goes uncompleted.  
+      In 2012, CanberraUAV \cite{canberrauav}, a UAV development team from Canberra completed the search aspect of the competition.
+      After trying a number of image recognition algorithms, the search algorithm that they flew with simply looked for the blue of the jeans of Outback Joe \cite{tridge}. This was sufficient to locate the target in a 4x6 km area.  This goes to show that even a minimally complex routine can be effectively applied in appropriate conditions.
 
-    Multi-copters have received a great deal of attention by merit of their simplicity.  A great deal of design work has come out of hobbyist communities, notably forums 
-    such as DIY Drones \cite{DIYDrones} that have been home to 
+    \subsection{Terrain Estimation via Optical Flow Methods}
+      Adding sensors to allow the copter to understand is a surprisingly difficult task.  Conventional contact methods operate at ranges too close for UAVs, ultrasonics are buffeted by down-wash and most depth sensors are either too heavy or suffer under intense light.
+      In terms of simplicity of algorithms, biomimickry has turned up some surprising results.  In 2004, a French research group applied a number of optical flow algorithms to the navigation of a small helicopter \cite{InsectFlowMethods}.  The computer vision routines were used to inform the navigation loops, following the middle of urban tunnels and reducing speed in dense clutter, without necessarily computing the distance to the obstacles.  These routines were relatively expensive in terms of computational power, but extremely simple and parallelizeable.
+
+    \subsection{Position Estimation using Stereoscopic Methods}
+      Any measurement will have an associated uncertainty, extracting the most information out of a collection of measurements rarely involves taking the most accurate measurements.  It is possible to estimate the position of an object or feature using multiple images separated in either space or time, but making effective use the information requires an understanding of how the uncertainties behave.  Error Modeling in Stereo Navigation \cite{stereoUnc} investigates a number of routines to estimate the position of a vehicle by tracking visible land-marks in a stereoscopic system, and notes the interaction between the geometry of the uncertainties, and the stability of the result.
+
 
     \subsection{Altitude Estimation by optical flow}
+      Dedicated, low resolution optical flow sensor 
+    optoAlt
+
     \subsection{Optical Navigation IROS}
     \subsection{Chase cam}
 
